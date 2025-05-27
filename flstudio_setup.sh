@@ -87,15 +87,20 @@ sudo apt update && sudo apt upgrade -y
 
 sudo dpkg --add-architecture i386 || true
 sudo mkdir -pm755 /etc/apt/keyrings
+
+# Modified section for key download
+sudo rm -f /tmp/winehq.key  # Ensure it can be overwritten
 wget -qO /tmp/winehq.key https://dl.winehq.org/wine-builds/winehq.key
-sudo install -m644 /tmp/winehq.key /etc/apt/keyrings/
+sudo install -m644 /tmp/winehq.key /etc/apt/keyrings/winehq.key # This is the existing target name
+sudo rm -f /tmp/winehq.key # Clean up the temp file
+
 cat <<EOF | sudo tee /etc/apt/sources.list.d/winehq.sources
 Types: deb
 URIs: https://dl.winehq.org/wine-builds/ubuntu
 Suites: $(lsb_release -cs)
 Components: main
-Signed-By: /etc/apt/keyrings/winehq.key
-EOF  # :contentReference[oaicite:10]{index=10}
+Signed-By: /etc/apt/keyrings/winehq.key # Ensure this matches the installed key name
+EOF # :contentReference[oaicite:10]{index=10}
 
 PKG_BASE="winehq-$WINE_BRANCH wine64 wine32 winetricks wineasio \
           qjackctl pipewire-jack libpipewire-0.3-modules imagemagick \
